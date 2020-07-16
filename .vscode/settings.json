@@ -1,0 +1,37 @@
+{
+    "search.exclude": {
+        "**/node_modules": true,
+    },
+
+    "editor.autoIndent": "full",
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+    "[javascript]": {
+        "editor.formatOnSave": true,
+    },
+    "[javascriptreact]": {
+        "editor.formatOnSave": true,
+    },
+    "[typescript]": {
+        "editor.formatOnSave": true,
+    },
+    "[typescriptreact]": {
+        "editor.formatOnSave": true,
+    },
+    "[json]": {
+        "editor.formatOnSave": true,
+    },
+
+    "javascript.format.enable": true,
+    "typescript.format.enable": true,
+    "json.format.enable": true,
+
+    "npm.enableScriptExplorer": true,
+    "typescript.tsdk": "./packages/clients/node_modules/typescript/lib"
+}

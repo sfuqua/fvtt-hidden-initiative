@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "lib": ["es2017"],
+        "importHelpers": true,
+        "module": "es2015",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+
+        "skipLibCheck": true,
+
+        "strict": true,
+        "allowUnreachableCode": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+
+        "target": "es2015"
+    },
+    "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
+}

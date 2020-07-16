@@ -1,0 +1,33 @@
+{
+    "name": "fvtt-hidden-initiative",
+    "version": "0.0.1",
+    "description": "Customizes the Foundry VTT combat tracker to hide initiative rolls.",
+    "main": "index.js",
+    "scripts": {
+        "format": "prettier --write \"./**/*.{js,json,md,ts}\"",
+        "lint": "eslint . --ext .ts,.tsx",
+        "lint:fix": "npm run lint -- --fix",
+        "test": "jest --colors"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sfuqua/fvtt-hidden-intiative.git"
+    },
+    "author": "Steven Fuqua",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/sfuqua/fvtt-hidden-intiative/issues"
+    },
+    "homepage": "https://github.com/sfuqua/fvtt-hidden-intiative#readme",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^3.6.1",
+        "@typescript-eslint/parser": "^3.6.1",
+        "eslint": "^7.4.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-import": "^2.22.0",
+        "jest": "^26.1.0",
+        "prettier": "^2.0.5",
+        "ts-jest": "^26.1.2",
+        "typescript": "^3.9.6"
+    }
+}
