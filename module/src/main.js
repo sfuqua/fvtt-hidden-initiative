@@ -1,8 +1,11 @@
+"use strict";
 /**
  * CURRENT BEHAVIOR (for visible monsters)
  * 1. All initiative rolls are public (announced to chat by default), including for monsters
  * 2. As soon as a monster (or player) has initiative, it renders in the table and re-sorts itself
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HiddenInitiativeCombatTracker = void 0;
 /**
  * DESIRED BEHAVIOR (for visible monsters)
  * 1. Track a list of "Unpredictable threats" (monsters with hidden initiative)
@@ -25,7 +28,7 @@ async function rollInitiative(ids, formula = null, options = {}) {
     await super.rollInitiative(ids, formula, options);
     return this;
 }
-export class HiddenInitiativeCombatTracker extends CombatTracker {
+class HiddenInitiativeCombatTracker extends CombatTracker {
     constructor() {
         super();
     }
@@ -38,6 +41,7 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
         return baseData;
     }
 }
+exports.HiddenInitiativeCombatTracker = HiddenInitiativeCombatTracker;
 // TODO: Module settings for "default to hidden monsters"?
 // TODO: Override 'toggleCombat' on token?
 // We could await the original result, and then immediately update
