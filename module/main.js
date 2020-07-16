@@ -3,7 +3,6 @@
  * 1. All initiative rolls are public (announced to chat by default), including for monsters
  * 2. As soon as a monster (or player) has initiative, it renders in the table and re-sorts itself
  */
-
 /**
  * DESIRED BEHAVIOR (for visible monsters)
  * 1. Track a list of "Unpredictable threats" (monsters with hidden initiative)
@@ -17,53 +16,36 @@
  *      Need to override rollInitiative and provide a messageOptions["rollMode"] === "gmroll" to the super.rollInitiative
  *      Only for monsters, though, let players do their thing (maybe? ooh that could be a gmroll too)
  */
-
 // Need to either patch Combat.prototype.rollInitiative with this,
 // or patch it before rendering each combat tracker.
-export async function rollInitiative(
-    this: Combat,
-    ids: string | string[],
-    formula: string | null = null,
-    options: InitiativeOptions = {}
-): Promise<Combat> {
+export async function rollInitiative(ids, formula = null, options = {}) {
     // TODO: Check IDs and settings to determine whether to gmroll by default
     const shouldGmRoll = true;
-    options = {
-        ...options,
-        rollMode: options.rollMode ? options.rollMode : shouldGmRoll ? "gmroll" : undefined,
-    };
-
+    options = Object.assign(Object.assign({}, options), { rollMode: options.rollMode ? options.rollMode : shouldGmRoll ? "gmroll" : undefined });
     // TODO: Replace with a parameter or something
     await this.rollInitiative(ids, formula, options);
-
     return this;
 }
-
 export class HiddenInitiativeCombatTracker extends CombatTracker {
     constructor() {
         super();
     }
-
     /**
      * Provides data to the CombatTracker render template.
      */
-    async getData(): Promise<CombatTrackerData> {
+    async getData() {
         const baseData = await super.getData();
         // TODO: Tamper with monster initiative and sort order in baseData.turns
         return baseData;
     }
 }
-
 // TODO: Module settings for "default to hidden monsters"?
-
 // TODO: Override 'toggleCombat' on token?
 // We could await the original result, and then immediately update
 // the combatant to a hidden state based on the module setting + token ID
-
 // To mark a combatant as "hidden":
 // combat.updateCombatant({ _id: c._id, hidden: true })
 // Note: hidden defaults to the status of the token
-
 // Combat.setupTurns is responsible for generating a list of "turn" objects that are sorted by initiative, then name
 // All players get ALL turns, UI filtering happens later in CombatTracker.getData()
 // This generates a *separate* turns[] array:
@@ -75,16 +57,11 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
       control: hasControl
     });
 */
-
 // Called when the user opens the combat tracker settings panel
-Hooks.on(
-    "renderCombatTrackerConfig",
-    (config: CombatTrackerConfig, html: JQuery<HTMLElement>, data: CombatTrackerConfigData) => {
-        // TODO
-    }
-);
-
-Hooks.on("renderCombatTracker", (tracker: CombatTracker, html: JQuery<HTMLElement>, data: CombatTrackerData) => {
+Hooks.on("renderCombatTrackerConfig", (config, html, data) => {
+    // TODO
+});
+Hooks.on("renderCombatTracker", (tracker, html, data) => {
     // TODO
     // data.turns contains the turns that *will be* rendered.
     // That is, potentially contains visible monsters (NOT hidden ones, they're already gone).
@@ -94,9 +71,7 @@ Hooks.on("renderCombatTracker", (tracker: CombatTracker, html: JQuery<HTMLElemen
     // Override CombatTracker.getData; call it, and then re-map 'turns'
     // For non-player turns, we could do check: if (!(player || owner)), replace initiative and sort to top
 });
-
 // Hooks.on("renderSidebarTab") with name "combat"
 // Hooks.on("updateCombatant") [via Hooks.callAll(`update${type}`)]
-
 // c.players = c.actor ? players.filter(u => c.actor.hasPerm(u, "OWNER"))
 // const players = game.users.players;

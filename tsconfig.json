@@ -5,7 +5,7 @@
         "esModuleInterop": true,
         "lib": ["dom", "es2017"],
         "importHelpers": true,
-        "module": "commonjs",
+        "module": "ES6",
         "moduleResolution": "node",
         "resolveJsonModule": true,
 

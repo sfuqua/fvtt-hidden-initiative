@@ -1,4 +1,4 @@
-import type * as Strings from "../module/strings/en.json";
+import type * as Strings from "./strings/en.json";
 
 /**
  * Supported resource keys.
