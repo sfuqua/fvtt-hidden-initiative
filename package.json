@@ -6,7 +6,7 @@
     "main": "index.js",
     "scripts": {
         "build": "tsc",
-        "clean": "rimraf .tsbuildinfo module/**.js",
+        "clean": "rimraf .tsbuildinfo module/**/*.js",
         "format": "prettier --write \"./**/*.{js,json,md,ts}\"",
         "lint": "eslint . --ext .ts,.tsx",
         "lint:fix": "npm run lint -- --fix",
