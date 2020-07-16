@@ -1,6 +1,7 @@
 {
     "name": "fvtt-hidden-initiative",
     "version": "0.0.1",
+    "private": true,
     "description": "Customizes the Foundry VTT combat tracker to hide initiative rolls.",
     "main": "index.js",
     "scripts": {

@@ -1,0 +1,3 @@
+# Foundry VTT Hidden Initiative
+
+README to follow...
