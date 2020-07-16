@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
+        "outDir": "./module",
+
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "lib": ["es2017"],
+        "lib": ["dom", "es2017"],
         "importHelpers": true,
         "module": "es2015",
         "moduleResolution": "node",
@@ -15,7 +17,9 @@
         "noUnusedLocals": true,
         "noUnusedParameters": false,
 
-        "target": "es2015"
+        "target": "es2017",
+        "types": ["foundry-pc-types"]
     },
+    "include": ["src/**/*"],
     "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
 }
