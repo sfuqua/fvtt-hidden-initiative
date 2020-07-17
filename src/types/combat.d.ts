@@ -108,10 +108,10 @@ declare interface CombatTrackerData {
              * Result of parsing the Combat.turn initiative string.
              * If the result was not a number, it is coerced to null.
              */
-            intiative: string | null;
+            initiative: string | null;
 
             /**
-             * intiative !== null.
+             * initiative !== null.
              */
             hasRolled: boolean;
 

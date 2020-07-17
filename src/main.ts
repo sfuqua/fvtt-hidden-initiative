@@ -1,3 +1,5 @@
+import { HiddenInitiativeCombatTracker } from "./HiddenInitiativeCombatTracker";
+
 /**
  * CURRENT BEHAVIOR (for visible monsters)
  * 1. All initiative rolls are public (announced to chat by default), including for monsters
@@ -17,42 +19,6 @@
  *      Need to override rollInitiative and provide a messageOptions["rollMode"] === "gmroll" to the super.rollInitiative
  *      Only for monsters, though, let players do their thing (maybe? ooh that could be a gmroll too)
  */
-
-// Need to either patch Combat.prototype.rollInitiative with this,
-// or patch it before rendering each combat tracker.
-export async function rollInitiative(
-    this: Combat,
-    ids: string | string[],
-    formula: string | null = null,
-    options: InitiativeOptions = {}
-): Promise<Combat> {
-    // TODO: Check IDs and settings to determine whether to gmroll by default
-    const shouldGmRoll = true;
-    options = {
-        ...options,
-        rollMode: options.rollMode ? options.rollMode : shouldGmRoll ? "gmroll" : undefined,
-    };
-
-    // TODO: Replace with a parameter or something
-    await this.rollInitiative(ids, formula, options);
-
-    return this;
-}
-
-export class HiddenInitiativeCombatTracker extends CombatTracker {
-    constructor() {
-        super();
-    }
-
-    /**
-     * Provides data to the CombatTracker render template.
-     */
-    async getData(): Promise<CombatTrackerData> {
-        const baseData = await super.getData();
-        // TODO: Tamper with monster initiative and sort order in baseData.turns
-        return baseData;
-    }
-}
 
 // TODO: Module settings for "default to hidden monsters"?
 
@@ -76,11 +42,18 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
     });
 */
 
+Hooks.on("init", () => {
+    // TODO: Register module settings
+
+    // Override the default CombatTracker with our extension
+    CONFIG.ui.combat = HiddenInitiativeCombatTracker;
+});
+
 // Called when the user opens the combat tracker settings panel
 Hooks.on(
     "renderCombatTrackerConfig",
     (config: CombatTrackerConfig, html: JQuery<HTMLElement>, data: CombatTrackerConfigData) => {
-        // TODO
+        // TODO: Could append a template here to allow overriding initiative settings on a per-tracker basis
     }
 );
 
