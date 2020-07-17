@@ -32,7 +32,7 @@ jobs:
       run: npm run lint && npm run build && npm test
       
     - name: Zip the module
-      run: zip -r ./module.zip ./module
+      run: cd module && zip -r ../module.zip ./
       
     - name: Create release
       id: create_release
