@@ -30,9 +30,27 @@ jobs:
       
     - name: Lint, build, test
       run: npm run lint && npm run build && npm test
-
-    - name: Zip release
-      uses: TheDoctor0/zip-release@0.4.1
+      
+    - name: Zip the module
+      run: zip -r ./module.zip ./module
+      
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        filename: Release-${{ github.ref }}.zip # TODO: Tag name
-        path: ./module
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        prerelease: true
+    
+    - name: Upload module zip
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./module.zip
+        asset_name: hidden-initiative-${{ github.ref }}.zip
+        asset_content_type: application/zip
