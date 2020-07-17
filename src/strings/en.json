@@ -1,4 +1,11 @@
 {
     "Initiative.Unknown": "Unknown",
-    "Initiative.Unrolled": "Not rolled"
+    "Initiative.Unrolled": "Not rolled",
+    "Setting.NpcRoll.Title": "NPC roll visibility",
+    "Setting.NpcRoll.Description": "Configures how to roll for non-player initiative",
+    "Setting.PlayerRoll.Title": "Player roll visibility",
+    "Setting.PlayerRoll.Description": "Configures how to roll for player initiative",
+    "Setting.RollType.GM": "GM",
+    "Setting.RollType.Open": "Public",
+    "Setting.RollType.Default": "Unspecified (Chat settings)"
 }

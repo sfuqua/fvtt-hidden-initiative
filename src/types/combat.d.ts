@@ -39,6 +39,9 @@ declare interface Combatant {
      */
     readonly _id: string;
 
+    readonly actor?: Actor;
+    readonly players?: User[];
+
     /**
      * Whether this combatant is visible to players.
      */

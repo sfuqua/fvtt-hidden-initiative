@@ -17,7 +17,8 @@
         "noUnusedParameters": false,
 
         "target": "es2017",
-        "types": ["foundry-pc-types"]
+        "types": ["foundry-pc-types", "jest"]
     },
-    "include": ["./src/**/*"]
+    "include": ["./src/**/*"],
+    "exclude": ["./src/**/*.spec.ts"]
 }

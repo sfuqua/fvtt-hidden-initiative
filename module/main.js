@@ -1,4 +1,7 @@
 import { HiddenInitiativeCombatTracker, STATUS, InitiativeStatus, } from "./HiddenInitiativeCombatTracker.js";
+import { createRollInitiativeReplacement } from "./createRollInitiativeReplacement.js";
+import { loc } from "./loc.js";
+import { RollVisibility, MODULE_NAME, SettingName } from "./settings.js";
 /**
  * CURRENT BEHAVIOR (for visible monsters)
  * 1. All initiative rolls are public (announced to chat by default), including for monsters
@@ -36,7 +39,30 @@ import { HiddenInitiativeCombatTracker, STATUS, InitiativeStatus, } from "./Hidd
     });
 */
 Hooks.on("init", () => {
-    // TODO: Register module settings
+    game.settings.register(MODULE_NAME, SettingName.NpcRoll, {
+        name: loc("Setting.NpcRoll.Title"),
+        hint: loc("Setting.NpcRoll.Description"),
+        type: String,
+        default: RollVisibility.GM,
+        choices: {
+            [RollVisibility.Default]: "Setting.RollType.Default",
+            [RollVisibility.GM]: "Setting.RollType.GM",
+            [RollVisibility.Open]: "Setting.RollType.Open",
+        },
+        scope: "world",
+    });
+    game.settings.register(MODULE_NAME, SettingName.PlayerRoll, {
+        name: loc("Setting.PlayerRoll.Title"),
+        hint: loc("Setting.PlayerRoll.Description"),
+        type: String,
+        default: RollVisibility.GM,
+        choices: {
+            [RollVisibility.Default]: "Setting.RollType.Default",
+            [RollVisibility.GM]: "Setting.RollType.GM",
+            [RollVisibility.Open]: "Setting.RollType.Open",
+        },
+        scope: "world",
+    });
     // Override the default CombatTracker with our extension
     CONFIG.ui.combat = HiddenInitiativeCombatTracker;
 });
@@ -44,7 +70,18 @@ Hooks.on("init", () => {
 Hooks.on("renderCombatTrackerConfig", (config, html, data) => {
     // TODO: Could append a template here to allow overriding initiative settings on a per-tracker basis
 });
+/**
+ * Dictionary key to use to track whether a Combast instance has already been patched by this module.
+ */
+const ROLL_SHIMMED = Symbol("RollShimmed");
 Hooks.on("renderHiddenInitiativeCombatTracker", (tracker, html, data) => {
+    // Monkeypatch the Combat.rollInitiative function if we haven't already for this instance
+    const shimmedCombat = data.combat;
+    if (data.combat && !shimmedCombat[ROLL_SHIMMED]) {
+        shimmedCombat[ROLL_SHIMMED] = true;
+        const originalRollFn = data.combat.rollInitiative;
+        data.combat.rollInitiative = createRollInitiativeReplacement(data.combat, originalRollFn);
+    }
     // TODO
     // data.turns contains the turns that *will be* rendered.
     // That is, potentially contains visible monsters (NOT hidden ones, they're already gone).
