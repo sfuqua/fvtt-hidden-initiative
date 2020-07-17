@@ -3,6 +3,9 @@ name: Publish
 on:
   workflow_dispatch:
     inputs:
+      release-tag:
+        required: true
+        description: Tag to create for the release
   push:
     # Sequence of patterns matched against refs/tags
     tags:
@@ -40,8 +43,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.event.inputs.tags }}
+        release_name: Release v${{ github.event.inputs.tags }}
         draft: false
         prerelease: true
     
