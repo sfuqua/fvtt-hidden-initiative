@@ -55,6 +55,7 @@ Hooks.on("init", () => {
         name: loc("Setting.NpcRoll.Title"),
         hint: loc("Setting.NpcRoll.Description"),
         type: String,
+        config: true,
         default: RollVisibility.GM,
         choices: {
             [RollVisibility.Default]: "Setting.RollType.Default",
@@ -68,6 +69,7 @@ Hooks.on("init", () => {
         name: loc("Setting.PlayerRoll.Title"),
         hint: loc("Setting.PlayerRoll.Description"),
         type: String,
+        config: true,
         default: RollVisibility.GM,
         choices: {
             [RollVisibility.Default]: "Setting.RollType.Default",

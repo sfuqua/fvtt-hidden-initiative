@@ -16,6 +16,11 @@ declare type CommonSettingRegistrationFields<T> = {
     default: T;
 
     /**
+     * True if this should appear in the settings config view.
+     */
+    config: boolean;
+
+    /**
      * If specified, the resulting setting will be a select menu.
      */
     choices?: Record<string, T>;

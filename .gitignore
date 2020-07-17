@@ -1,5 +1,8 @@
 node_modules/
 
+# Build artifacts
+module/**/*.js
+
 # Test artifacts
 coverage/
 junit.xml

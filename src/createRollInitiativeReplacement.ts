@@ -1,4 +1,4 @@
-import { MODULE_NAME, SettingName, RollVisibility } from "./settings";
+import { MODULE_NAME, SettingName, RollVisibility } from "./settings.js";
 
 /**
  * Helper typedef for Combat.rollInitiative.
