@@ -5,6 +5,7 @@
     "author": "Steven Fuqua",
     "url": "https://github.com/sfuqua/fvtt-hidden-intiative",
     "manifest": "https://raw.githubusercontent.com/sfuqua/fvtt-hidden-initiative/master/module/module.json",
+    "download": "",
     "license": "MIT",
     "version": "0.0.1",
     "minimumCoreVersion": "0.6.0",

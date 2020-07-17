@@ -5,22 +5,14 @@ on:
     inputs:
       tag:
         required: true
-        description: Tag to create for the release
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+        description: Tag to create for the release (prefix with 'v')
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
     - name: Setup Node.js environment
@@ -44,7 +36,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.event.inputs.tag }}
-        release_name: Release v${{ github.event.inputs.tag }}
+        release_name: Release ${{ github.event.inputs.tag }}
         draft: false
         prerelease: true
     
@@ -55,5 +47,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: ./module.zip
-        asset_name: hidden-initiative-${{ github.ref }}.zip
+        asset_name: fvtt-hidden-initiative-module.zip
         asset_content_type: application/zip
