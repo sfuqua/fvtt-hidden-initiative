@@ -66,6 +66,42 @@ declare interface CombatTurn {
     visible: boolean;
 }
 
+/**
+ * Data used to render a turn. Contains everything from CombatTurn, plus a little more.
+ */
+type CombatTurnData = CombatTurn & {
+    /**
+     * Combatant ID.
+     */
+    _id: string;
+
+    /**
+     * Either the token name or actor name.
+     */
+    name: string;
+
+    /**
+     * Whether this is the current turn.
+     */
+    active: boolean;
+
+    /**
+     * Result of parsing the Combat.turn initiative string.
+     * If the result was not a number, it is coerced to null.
+     */
+    initiative: string | null;
+
+    /**
+     * initiative !== null.
+     */
+    hasRolled: boolean;
+
+    /**
+     * className (e.g., "active defeated").
+     */
+    css: string;
+};
+
 declare type InitiativeOptions = {
     rollMode?: "roll" | "gmroll";
 };
@@ -92,35 +128,7 @@ declare interface CombatTrackerData {
     /**
      * Subset of Combat.turns that are visible to this user.
      */
-    readonly turns: Array<
-        CombatTurn & {
-            /**
-             * Either the token name or actor name.
-             */
-            name: string;
-
-            /**
-             * Whether this is the current turn.
-             */
-            active: boolean;
-
-            /**
-             * Result of parsing the Combat.turn initiative string.
-             * If the result was not a number, it is coerced to null.
-             */
-            initiative: string | null;
-
-            /**
-             * initiative !== null.
-             */
-            hasRolled: boolean;
-
-            /**
-             * className (e.g., "active defeated").
-             */
-            css: string;
-        }
-    >;
+    readonly turns: CombatTurnData[];
 }
 
 /**

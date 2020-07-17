@@ -1,4 +1,4 @@
-import { HiddenInitiativeCombatTracker } from "./HiddenInitiativeCombatTracker";
+import { HiddenInitiativeCombatTracker, STATUS, InitiativeStatus, } from "./HiddenInitiativeCombatTracker.js";
 /**
  * CURRENT BEHAVIOR (for visible monsters)
  * 1. All initiative rolls are public (announced to chat by default), including for monsters
@@ -44,7 +44,7 @@ Hooks.on("init", () => {
 Hooks.on("renderCombatTrackerConfig", (config, html, data) => {
     // TODO: Could append a template here to allow overriding initiative settings on a per-tracker basis
 });
-Hooks.on("renderCombatTracker", (tracker, html, data) => {
+Hooks.on("renderHiddenInitiativeCombatTracker", (tracker, html, data) => {
     // TODO
     // data.turns contains the turns that *will be* rendered.
     // That is, potentially contains visible monsters (NOT hidden ones, they're already gone).
@@ -53,6 +53,12 @@ Hooks.on("renderCombatTracker", (tracker, html, data) => {
     // Alternate approach:
     // Override CombatTracker.getData; call it, and then re-map 'turns'
     // For non-player turns, we could do check: if (!(player || owner)), replace initiative and sort to top
+    // console.log(JSON.stringify(data));
+    for (const t of data.turns) {
+        if (t[STATUS] === InitiativeStatus.Unrolled && !t.owner) {
+            html.find(`[data-combatant-id='${t._id}'] > div.token-initiative`).append('<span class="initiative">...</span>');
+        }
+    }
 });
 // Hooks.on("renderSidebarTab") with name "combat"
 // Hooks.on("updateCombatant") [via Hooks.callAll(`update${type}`)]

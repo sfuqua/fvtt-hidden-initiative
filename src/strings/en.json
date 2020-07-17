@@ -1,3 +1,4 @@
 {
-    "TestKey": "Test string"
+    "Initiative.Unknown": "Unknown",
+    "Initiative.Unrolled": "Not rolled"
 }

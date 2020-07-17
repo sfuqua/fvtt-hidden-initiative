@@ -4,6 +4,7 @@
     "description": "A module for hiding initiative from players in the combat tracker",
     "author": "Steven Fuqua",
     "url": "https://github.com/sfuqua/fvtt-hidden-intiative",
+    "manifest": "https://raw.githubusercontent.com/sfuqua/fvtt-hidden-initiative/master/module/module.json",
     "license": "MIT",
     "version": "0.0.1",
     "minimumCoreVersion": "0.6.0",
@@ -14,5 +15,6 @@
             "path": "strings/en.json"
         }
     ],
-    "scripts": ["main.js"]
+    "scripts": [],
+    "esmodules": ["main.js"]
 }
