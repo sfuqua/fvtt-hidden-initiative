@@ -137,7 +137,7 @@ declare interface CombatTrackerData {
 /**
  * TODO: Other values as needed from https://foundryvtt.com/api/CombatTracker.html
  */
-declare class CombatTracker {
+declare class CombatTracker extends SidebarTab {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]);
 

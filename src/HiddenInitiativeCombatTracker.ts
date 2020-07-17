@@ -1,3 +1,5 @@
+import { MODULE_NAME, SettingName } from "./settings.js";
+
 /**
  * String to show in place of real initiative, for creatures who are pending.
  */
@@ -75,21 +77,21 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
     async getData(): Promise<HiddenInitiativeCombatTrackerData> {
         const baseData = await super.getData();
 
+        // Whether to show numbers instead of masking as battle wears on
+        const revealKnownInitiative = !!game.settings.get(MODULE_NAME, SettingName.RevealValues);
+
         const activeIndex = baseData.turns.findIndex((t) => t.active);
         const maskedTurns: HiddenInitiativeCombatTrackerData["turns"] = baseData.turns.map((t, i) => {
-            if (!t.hasRolled) {
-                return {
-                    ...t,
-                    initiative: "+",
-                    [STATUS]: InitiativeStatus.Unrolled,
-                    [SORT_KEY]: initiativeToInt(null),
-                    [TURN_INDEX]: i,
-                };
-            }
+            // We want to mask the initiative (show a ?, sort to top) if:
+            // - round <= 1
+            // - i > activeIndex
+            const initiativeUnknown = baseData.round === 0 || (baseData.round === 1 && i > activeIndex);
 
-            if (t.owner || t.players?.length > 0) {
-                // If the current player owns this turn's actor, or if this turn
-                // is associated with one or more players, don't tamper with it.
+            // We show the real number, treating initiative as public, if any of these are true:
+            // - This creature's turn order is known (!initiativeUnknown) and settings say we should reveal
+            // - The current user owns this turn
+            // - The creature has associated players
+            if ((!initiativeUnknown && revealKnownInitiative) || t.owner || t.players?.length > 0) {
                 return {
                     ...t,
                     [STATUS]: InitiativeStatus.Public,
@@ -102,10 +104,6 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
             // - The current client is not a DM
             // - The current client does not have "permission" to view this monster's initiative
 
-            // We want to mask the initiative (show a ?, sort to top) if:
-            // - round <= 1
-            // - i > activeIndex
-            const initiativeUnknown = baseData.round === 0 || (baseData.round === 1 && i > activeIndex);
             return {
                 ...t,
                 initiative: initiativeUnknown ? UNKNOWN_MASK : REVEALED_MASK,

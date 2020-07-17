@@ -1,5 +1,6 @@
 export const MODULE_NAME = "hidden-initiative";
 export enum SettingName {
+    RevealValues = "revealValues",
     NpcRoll = "npcRollVisibility",
     PlayerRoll = "playerRollVisibility",
 }

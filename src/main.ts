@@ -51,6 +51,21 @@ import { RollVisibility, MODULE_NAME, SettingName } from "./settings.js";
 */
 
 Hooks.on("init", () => {
+    game.settings.register(MODULE_NAME, SettingName.RevealValues, {
+        name: loc("Setting.RevealInitiative.Title"),
+        hint: loc("Setting.RevealInitiative.Hint"),
+        type: Boolean,
+        config: true,
+        default: true,
+        scope: "world",
+        onChange: (newValue) => {
+            console.log(
+                `[${MODULE_NAME}]: Initiative reveal setting changed to ${newValue}, re-rendering CombatTracker`
+            );
+            ui.combat.render();
+        },
+    });
+
     game.settings.register(MODULE_NAME, SettingName.NpcRoll, {
         name: loc("Setting.NpcRoll.Title"),
         hint: loc("Setting.NpcRoll.Description"),
