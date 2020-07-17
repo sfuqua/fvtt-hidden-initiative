@@ -78,6 +78,10 @@ Hooks.on("init", () => {
             [RollVisibility.Open]: "Setting.RollType.Open",
         },
         scope: "world",
+        onChange: (newValue) => {
+            console.log(`[${MODULE_NAME}]: New NPC roll visibility: ${newValue}; re-rendering CombatTracker`);
+            ui.combat.render();
+        },
     });
 
     game.settings.register(MODULE_NAME, SettingName.PlayerRoll, {
@@ -92,6 +96,10 @@ Hooks.on("init", () => {
             [RollVisibility.Open]: "Setting.RollType.Open",
         },
         scope: "world",
+        onChange: (newValue) => {
+            console.log(`[${MODULE_NAME}]: New player roll visibility: ${newValue}; re-rendering CombatTracker`);
+            ui.combat.render();
+        },
     });
 
     // Override the default CombatTracker with our extension

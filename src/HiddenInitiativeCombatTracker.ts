@@ -1,4 +1,4 @@
-import { MODULE_NAME, SettingName } from "./settings.js";
+import { MODULE_NAME, SettingName, RollVisibility } from "./settings.js";
 
 /**
  * String to show in place of real initiative, for creatures who are pending.
@@ -90,8 +90,23 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
             // We show the real number, treating initiative as public, if any of these are true:
             // - This creature's turn order is known (!initiativeUnknown) and settings say we should reveal
             // - The current user owns this turn
-            // - The creature has associated players
-            if ((!initiativeUnknown && revealKnownInitiative) || t.owner || t.players?.length > 0) {
+            // - The creature has associated players (gated on a setting)
+
+            // For players we hedge towards lenient (default Foundry) settings; as long as we haven't locked them to GM visibility,
+            // players can see each other's initiative in the trackers.
+            const shouldHidePlayers = game.settings.get(MODULE_NAME, SettingName.PlayerRoll) === RollVisibility.GM;
+
+            // For NPCs we lean in the opposite direction given the design intent of this module.
+            // We always hide initiative for NPCs unless the user has explicitly opted into open rolls.
+            const shouldRevealNpcs = game.settings.get(MODULE_NAME, SettingName.NpcRoll) === RollVisibility.Open;
+
+            const isPlayerTurn = !!t.players && t.players.length > 0;
+            if (
+                (!initiativeUnknown && revealKnownInitiative) ||
+                t.owner ||
+                (!shouldHidePlayers && isPlayerTurn) ||
+                (shouldRevealNpcs && !isPlayerTurn)
+            ) {
                 return {
                     ...t,
                     [STATUS]: InitiativeStatus.Public,
