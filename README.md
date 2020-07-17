@@ -18,6 +18,10 @@ You, the DM, will see the exact initiative at all times. Your players will be un
 
 Once a full round of combat has finished, the initiative order is considered public knowledge and won't re-sort itself any longer.
 
+## Installation
+
+Load the following manifest into Foundry: https://raw.githubusercontent.com/sfuqua/fvtt-hidden-initiative/master/module/module.json
+
 ## Configure roll visibility for players and NPCs
 
 Set your monsters and players with distinct visibility if you like:
