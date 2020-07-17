@@ -48,8 +48,8 @@ As combat progresses and the turn order is revealed to your players, the initiat
 
 Here, the mage is actually next up in the turn order, but Sariph doesn't know that yet.
 
-When the DM presses next turn and announces it's the mage's turn, Sariph will see the mage jump ahead of him in the queue and the "?" will get replaced with a "-".
+When the DM presses next turn and announces it's the mage's turn, Sariph will see the mage jump ahead of him in the queue and the "?" will get replaced with a "-" (dependent on module settings).
+
+*Note*: This screenshot is with the "Reveal initiative numbers during combat" setting **unchecked**. If it were checked, the goblin's initiative of 18 would be visible to players after it took its turn.
 
 After that will be Sariph's turn, followed by the final goblin. On subsequent rounds, the combat order will be known for everyone.
-
-**PENDING FEATURE**: You will be able to configure whether the NPC's real initiative roll is revealed as the battle goes on instead of continuing to mask the number.
