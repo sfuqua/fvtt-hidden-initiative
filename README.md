@@ -53,3 +53,19 @@ When the DM presses next turn and announces it's the mage's turn, Sariph will se
 *Note*: This screenshot is with the "Reveal initiative numbers during combat" setting **unchecked**. If it were checked, the goblin's initiative of 18 would be visible to players after it took its turn.
 
 After that will be Sariph's turn, followed by the final goblin. On subsequent rounds, the combat order will be known for everyone.
+
+## Notes on compatibility
+
+This section documents how the module works at a high level, to shed light on compatibility risks with other modules.
+
+### Override of CombatTracker
+
+This module overwrites `CONFIG.ui.combat` with a custom class (`HiddenInitiativeCombatTracker`) in order to customize the data that is provided to the CombatTracker UI. Specifically, it provides a custom implementation of `CombatTracker.getData`, which first gets data from the base class and then tampers with it (overwriting initiative values and re-sorting).
+
+As a result, this module will not play nicely with other modules that overwrite the default CombatTracker without some additional work.
+
+### Override of Combat.rollInitiative
+
+In order to customize the chat visibility of initiative rolls, this module overwrites the `rollInitiative` function of each Combat instance in the CombatTracker (this happens in the `"renderHiddenInitiativeCombatTracker"` hook). However, the original value is saved off in a closure and then called in order to the "heavy lifting" of the dice roll; the shim just customizes the `rollMode`.
+
+As a result, this module may not play nicely with other modules that interfere with the behavior of the `Combat.rollInitiative` function. However, if a module just *calls* `rollInitiative`, it *should* continue to work as expected.

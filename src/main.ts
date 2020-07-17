@@ -8,6 +8,9 @@ import { createRollInitiativeReplacement } from "./createRollInitiativeReplaceme
 import { loc } from "./loc.js";
 import { RollVisibility, MODULE_NAME, SettingName } from "./settings.js";
 
+// Note - below are original design notes before I started development.
+// Have not audited them to see if they're up to date, but don't want to delete just yet.
+
 /**
  * CURRENT BEHAVIOR (for visible monsters)
  * 1. All initiative rolls are public (announced to chat by default), including for monsters
@@ -28,27 +31,9 @@ import { RollVisibility, MODULE_NAME, SettingName } from "./settings.js";
  *      Only for monsters, though, let players do their thing (maybe? ooh that could be a gmroll too)
  */
 
-// TODO: Module settings for "default to hidden monsters"?
-
 // TODO: Override 'toggleCombat' on token?
 // We could await the original result, and then immediately update
 // the combatant to a hidden state based on the module setting + token ID
-
-// To mark a combatant as "hidden":
-// combat.updateCombatant({ _id: c._id, hidden: true })
-// Note: hidden defaults to the status of the token
-
-// Combat.setupTurns is responsible for generating a list of "turn" objects that are sorted by initiative, then name
-// All players get ALL turns, UI filtering happens later in CombatTracker.getData()
-// This generates a *separate* turns[] array:
-/*
-    return mergeObject(data, {
-      round: combat.data.round,
-      turn: combat.data.turn,
-      turns: turns,
-      control: hasControl
-    });
-*/
 
 Hooks.on("init", () => {
     game.settings.register(MODULE_NAME, SettingName.RevealValues, {
@@ -106,19 +91,15 @@ Hooks.on("init", () => {
     CONFIG.ui.combat = HiddenInitiativeCombatTracker;
 });
 
-// Called when the user opens the combat tracker settings panel
-Hooks.on(
-    "renderCombatTrackerConfig",
-    (config: CombatTrackerConfig, html: JQuery<HTMLElement>, data: CombatTrackerConfigData) => {
-        // TODO: Could append a template here to allow overriding initiative settings on a per-tracker basis
-    }
-);
-
 /**
  * Dictionary key to use to track whether a Combast instance has already been patched by this module.
  */
 const ROLL_SHIMMED = Symbol("RollShimmed");
 
+// Hook into the rendering of the combat tracker so that we can do two things:
+// 1. Shim the Combat.rollInitiative function
+// 2. Update the rendered HTML with a "..." for unrolled initiative
+// TODO: Group turns into separate lists, with headers.
 Hooks.on(
     "renderHiddenInitiativeCombatTracker",
     (tracker: CombatTracker, html: JQuery<HTMLElement>, data: HiddenInitiativeCombatTrackerData) => {
@@ -148,9 +129,3 @@ Hooks.on(
         }
     }
 );
-
-// Hooks.on("renderSidebarTab") with name "combat"
-// Hooks.on("updateCombatant") [via Hooks.callAll(`update${type}`)]
-
-// c.players = c.actor ? players.filter(u => c.actor.hasPerm(u, "OWNER"))
-// const players = game.users.players;
