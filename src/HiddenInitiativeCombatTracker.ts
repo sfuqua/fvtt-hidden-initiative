@@ -65,8 +65,8 @@ export type HiddenInitiativeCombatTrackerData = Omit<CombatTrackerData, "turns">
  * data presented to the view in order to facilitate hiding initiative from players.
  */
 export class HiddenInitiativeCombatTracker extends CombatTracker {
-    constructor() {
-        super();
+    constructor(...args: ConstructorParameters<typeof CombatTracker>) {
+        super(...args);
     }
 
     /**
