@@ -80,5 +80,3 @@ jobs:
         git commit -m "Updating manifest with latest release"
         git tag -fa ${{ steps.get_version.outputs.new_version }}
         git push -f --tags
-      env:
-
