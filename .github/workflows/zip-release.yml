@@ -1,11 +1,11 @@
 name: Publish
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        required: true
-        description: Tag to create for the release (prefix with 'v')
+  push:
+    branches:
+      - master
+    paths:
+      - module.json
 
 jobs:
   build:
@@ -26,8 +26,27 @@ jobs:
     - name: Lint, build, test
       run: npm run lint && npm run build && npm test
       
+      # Use jq to read the "version" attribute of module.json and store it
+      # in an env variable NEW_VERSION for later steps, as well as a step
+      # output called new_version.
+    - name: Get latest manifest version
+      id: get_version
+      run: |
+        echo '::set-env name=NEW_VERSION::$(jq -r '.version' module.json)'
+        echo '::set-output name=new_version::$(jq -r '.version' module.json)'
+
+    - name: Update manifest version
+      run: |
+        jq '.version=${{ github.event.inputs.version }}' module.json > updated.json
+        mv updated.json module.json
+
+    - name: Delete download URL from zipped manifest and copy to output
+      run: |
+        jq 'del(.download)' module.json > stripped.json
+        mv stripped.json ./module/module.json
+
     - name: Zip the module
-      run: cd module && zip -r ../module.zip ./
+      run: zip -r ./module.zip ./module
       
     - name: Create release
       id: create_release
@@ -35,12 +54,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.event.inputs.tag }}
-        release_name: Release ${{ github.event.inputs.tag }}
+        tag_name: ${{ steps.get_version.outputs.new_version }}
+        release_name: Release v${{ steps.get_version.outputs.new_version }}
         draft: false
         prerelease: true
     
     - name: Upload module zip
+      id: upload_release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,3 +69,16 @@ jobs:
         asset_path: ./module.zip
         asset_name: fvtt-hidden-initiative-module.zip
         asset_content_type: application/zip
+
+    - name: Update download URL in master
+      run: |
+        jq '.download="${{ steps.upload_release.outputs.browser_download_url }}"' module.json > updated.json
+        mv updated.json module.json
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git add module.json
+        git commit -m "Updating manifest with latest release"
+        git tag -fa ${{ steps.get_version.outputs.new_version }}
+        git push -f --tags
+      env:
+
