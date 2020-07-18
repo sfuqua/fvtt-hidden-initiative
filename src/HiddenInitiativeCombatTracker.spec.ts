@@ -140,7 +140,7 @@ describe("HiddenInitiativeCombatTracker", () => {
                 ],
                 expectedOverrides: [
                     {
-                        originalIndex: 2,
+                        originalIndex: 0,
                         status: InitiativeStatus.Unrolled,
                     },
                 ],
