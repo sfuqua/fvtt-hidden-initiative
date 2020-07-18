@@ -74,4 +74,4 @@ jobs:
         git add module.json
         git commit -m "Updating manifest with latest release"
         git tag -f ${{ steps.get_version.outputs.new_version }}
-        git push -f --tags
+        git push origin master -f --tags

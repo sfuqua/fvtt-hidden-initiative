@@ -1,6 +1,6 @@
 {
     "name": "hidden-initiative",
-    "version": "0.0.1.validation.4",
+    "version": "0.0.1.validation.5",
     "title": "Hidden Initiative",
     "description": "A module for hiding initiative from players in the combat tracker",
     "author": "Steven Fuqua",
