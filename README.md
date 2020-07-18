@@ -20,7 +20,7 @@ Once a full round of combat has finished, the initiative order is considered pub
 
 ## Installation
 
-Load the following manifest into Foundry: https://raw.githubusercontent.com/sfuqua/fvtt-hidden-initiative/master/module/module.json
+Load the following manifest into Foundry: https://raw.githubusercontent.com/sfuqua/fvtt-hidden-initiative/master/module.json
 
 ## Configure roll visibility for players and NPCs
 

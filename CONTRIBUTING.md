@@ -7,9 +7,11 @@
 This module is structured as a private NPM package. You should be able to clone it, run `npm install`, and be on your way.
 
 All code is written in TypeScript and lives under "src/".
-Build output (the installable module) gets copied to "module/"; by default in a fresh clone, only the module manifest lives in that folder.
+Build output (the installable module) gets copied to a new folder called "module/".
 
 Strings (strings/en.json) live in the src/ directory, and are automatically copied into the module directory by the TypeScript compiler.
+
+The module manifest (module.json) is not copied automatically (this happens in a GitHub workflow). If you need it during dev, you'll have to copy it manually for now.
 
 ## Foundry VTT TypeScript definitions
 
