@@ -35,12 +35,7 @@ jobs:
         echo '::set-env name=NEW_VERSION::$(jq -r '.version' module.json)'
         echo '::set-output name=new_version::$(jq -r '.version' module.json)'
 
-    - name: Update manifest version
-      run: |
-        jq '.version=${{ github.event.inputs.version }}' module.json > updated.json
-        mv updated.json module.json
-
-    - name: Delete download URL from zipped manifest and copy to output
+    - name: Delete download URL from manifest and copy to output directory
       run: |
         jq 'del(.download)' module.json > stripped.json
         mv stripped.json ./module/module.json
