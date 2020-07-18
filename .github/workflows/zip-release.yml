@@ -69,6 +69,7 @@ jobs:
       run: |
         jq '.download="${{ steps.upload_release.outputs.browser_download_url }}"' module.json > updated.json
         mv updated.json module.json
+        npx prettier --write "module.json"
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
         git add module.json
