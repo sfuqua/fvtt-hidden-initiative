@@ -1,0 +1,21 @@
+name: Test changes
+
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.1.0
+      with:
+        node-version: 12.x
+
+    - name: npm ci
+      run: npm ci
+      
+    - name: Lint, build, test
+      run: npm run lint && npm run build && npm test
