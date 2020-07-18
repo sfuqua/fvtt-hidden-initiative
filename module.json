@@ -1,8 +1,8 @@
 {
     "name": "hidden-initiative",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "title": "Hidden Initiative",
-    "description": "A module for hiding initiative from players in the combat tracker",
+    "description": "Enables hiding initiative values and dice rolls from players in the combat tracker",
     "author": "Steven Fuqua",
     "license": "MIT",
     "minimumCoreVersion": "0.6.0",
