@@ -3,4 +3,5 @@ module.exports = {
     moduleNameMapper: {
         "^(.+).js$": "$1",
     },
+    setupFiles: ["./jest.setup.js"],
 };

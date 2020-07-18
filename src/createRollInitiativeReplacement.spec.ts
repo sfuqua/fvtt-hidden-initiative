@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { createRollInitiativeReplacement } from "./createRollInitiativeReplacement";
 import { SettingName, RollVisibility } from "./settings";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 global.game = {
     settings: {
@@ -19,18 +20,18 @@ const MOCK_COMBAT = ({
             return {};
         }
     },
+    // @ts-ignore
 } as unknown) as Combat;
 
-const getSetting = game.settings.get as jest.Mock;
+// @ts-ignore
+const getSetting = game.settings.get as jest.Mock<unknown, [string, SettingName]>;
 
 describe("Generated functions", () => {
     const rollInitiative = jest.fn();
-    afterEach(() => {
-        rollInitiative.mockReset();
-    });
 
     afterEach(() => {
         getSetting.mockReset();
+        rollInitiative.mockReset();
     });
 
     it("acts as a pass-through if rollMode is specified", async () => {
@@ -58,7 +59,7 @@ describe("Generated functions", () => {
 
     it("uses settings for players", async () => {
         const fn = createRollInitiativeReplacement(MOCK_COMBAT, rollInitiative);
-        getSetting.mockImplementation((module: string, setting: SettingName) =>
+        getSetting.mockImplementation((module, setting) =>
             setting === SettingName.PlayerRoll ? RollVisibility.Open : undefined
         );
         await fn("pc1");

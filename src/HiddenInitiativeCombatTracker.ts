@@ -3,8 +3,8 @@ import { MODULE_NAME, SettingName, RollVisibility } from "./settings.js";
 /**
  * String to show in place of real initiative, for creatures who are pending.
  */
-const UNKNOWN_MASK = "?";
-const REVEALED_MASK = "-";
+export const UNKNOWN_MASK = "?";
+export const REVEALED_MASK = "-";
 
 /**
  * Translates an initiative string to a sortable numeric value.
@@ -74,7 +74,7 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
     /**
      * Provides data to the CombatTracker render template.
      */
-    async getData(): Promise<HiddenInitiativeCombatTrackerData> {
+    getData = async (): Promise<HiddenInitiativeCombatTrackerData> => {
         const baseData = await super.getData();
 
         // Whether to show numbers instead of masking as battle wears on
@@ -82,6 +82,15 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
 
         const activeIndex = baseData.turns.findIndex((t) => t.active);
         const maskedTurns: HiddenInitiativeCombatTrackerData["turns"] = baseData.turns.map((t, i) => {
+            if (!t.hasRolled) {
+                return {
+                    ...t,
+                    [STATUS]: InitiativeStatus.Unrolled,
+                    [SORT_KEY]: initiativeToInt(null),
+                    [TURN_INDEX]: i,
+                };
+            }
+
             // We want to mask the initiative (show a ?, sort to top) if:
             // - round <= 1
             // - i > activeIndex
@@ -142,5 +151,5 @@ export class HiddenInitiativeCombatTracker extends CombatTracker {
             ...baseData,
             turns: maskedTurns,
         };
-    }
+    };
 }
