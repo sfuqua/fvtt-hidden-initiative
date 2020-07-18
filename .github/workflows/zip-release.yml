@@ -32,8 +32,8 @@ jobs:
     - name: Get latest manifest version
       id: get_version
       run: |
-        echo '::set-env name=NEW_VERSION::$(jq -r '.version' module.json)'
-        echo '::set-output name=new_version::$(jq -r '.version' module.json)'
+        echo "::set-env name=NEW_VERSION::$(jq -r '.version' module.json)"
+        echo "::set-output name=new_version::$(jq -r '.version' module.json)"
 
     - name: Delete download URL from manifest and copy to output directory
       run: |
