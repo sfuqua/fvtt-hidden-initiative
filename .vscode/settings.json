@@ -15,17 +15,14 @@
     "[javascript]": {
         "editor.formatOnSave": true,
     },
-    "[javascriptreact]": {
-        "editor.formatOnSave": true,
-    },
     "[typescript]": {
-        "editor.formatOnSave": true,
-    },
-    "[typescriptreact]": {
         "editor.formatOnSave": true,
     },
     "[json]": {
         "editor.formatOnSave": true,
+    },
+    "[markdown]": {
+        "editor.formatOnSave": true
     },
 
     "javascript.format.enable": true,

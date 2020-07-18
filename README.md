@@ -45,16 +45,18 @@ Once a roll is finished, the value changes to "?". As a DM you see the proper li
 As combat progresses and the turn order is revealed to your players, the initiative values get replaced with a "-" to indicate the monster is locked into its correct position, without giving away the actual roll value:
 
 ### DM view
+
 ![Screenshot of tracker, mid-combat, from DM perspective](readme-images/mid-combat-dm.png)
 
 ### Player view
+
 ![Screenshot of tracker, mid-combat](readme-images/mid-combat.png)
 
 Here, the mage is actually next up in the turn order, but Sariph doesn't know that yet.
 
 When the DM presses next turn and announces it's the mage's turn, Sariph will see the mage jump ahead of him in the queue and the "?" will get replaced with a "-" (dependent on module settings).
 
-*Note*: This screenshot is with the "Reveal initiative numbers during combat" setting **unchecked**. If it were checked, the goblin's initiative of 18 would be visible to players after it took its turn.
+_Note_: This screenshot is with the "Reveal initiative numbers during combat" setting **unchecked**. If it were checked, the goblin's initiative of 18 would be visible to players after it took its turn.
 
 After that will be Sariph's turn, followed by the final goblin. On subsequent rounds, the combat order will be known for everyone.
 
@@ -72,4 +74,4 @@ As a result, this module will not play nicely with other modules that overwrite 
 
 In order to customize the chat visibility of initiative rolls, this module overwrites the `rollInitiative` function of each Combat instance in the CombatTracker (this happens in the `"renderHiddenInitiativeCombatTracker"` hook). However, the original value is saved off in a closure and then called in order to the "heavy lifting" of the dice roll; the shim just customizes the `rollMode`.
 
-As a result, this module may not play nicely with other modules that interfere with the behavior of the `Combat.rollInitiative` function. However, if a module just *calls* `rollInitiative`, it *should* continue to work as expected.
+As a result, this module may not play nicely with other modules that interfere with the behavior of the `Combat.rollInitiative` function. However, if a module just _calls_ `rollInitiative`, it _should_ continue to work as expected.
