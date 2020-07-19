@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import {
-    HiddenInitiativeCombatTracker,
+    WithHiddenInitiative,
     SORT_KEY,
     TURN_INDEX,
     InitiativeStatus,
@@ -46,6 +46,18 @@ const baseGetData = jest.fn<Data, []>();
 global.CombatTracker.prototype.getData = baseGetData;
 
 // @ts-ignore
+if (!global.CombatTracker) {
+    // @ts-ignore
+    global.CombatTracker = class {
+        getData = baseGetData;
+    };
+
+    throw new Error("xyz");
+} else {
+    throw new Error("asdf");
+}
+
+// @ts-ignore
 global.game = {
     settings: {
         get: jest.fn(),
@@ -76,10 +88,11 @@ function mockSettings(npcRoll: RollVisibility, playerRoll: RollVisibility, revea
 }
 
 describe("HiddenInitiativeCombatTracker", () => {
-    let tracker: HiddenInitiativeCombatTracker;
+    let tracker: CombatTracker;
 
     beforeEach(() => {
-        tracker = new HiddenInitiativeCombatTracker();
+        const TrackerClass = WithHiddenInitiative(CombatTracker);
+        tracker = new TrackerClass();
     });
 
     afterEach(() => {

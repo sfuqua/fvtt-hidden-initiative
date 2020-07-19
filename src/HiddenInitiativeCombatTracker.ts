@@ -62,94 +62,105 @@ export type HiddenInitiativeCombatTrackerData = Omit<CombatTrackerData, "turns">
     >;
 };
 
+type CombatTrackerConstructor = new (...args: ConstructorParameters<typeof CombatTracker>) => CombatTracker;
+
 /**
  * Extension of the Foundry VTT CombatTracker that handles massaging the
  * data presented to the view in order to facilitate hiding initiative from players.
+ * Dynamic/runtime extension pattern borrowed from https://www.bryntum.com/blog/the-mixin-pattern-in-typescript-all-you-need-to-know/
+ * in order to allow merging classes from different modules.
  */
-export class HiddenInitiativeCombatTracker extends CombatTracker {
-    constructor(...args: ConstructorParameters<typeof CombatTracker>) {
-        super(...args);
+export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(BaseTracker: T): CombatTrackerConstructor => {
+    class HiddenInitiativeMixinClass extends BaseTracker {
+        constructor(...args: ConstructorParameters<typeof CombatTracker>) {
+            super(...args);
+        }
+
+        /**
+         * Provides data to the CombatTracker render template.
+         */
+        getData = async (): Promise<HiddenInitiativeCombatTrackerData> => {
+            const baseData = await super.getData();
+
+            // Whether to show numbers instead of masking as battle wears on
+            const revealKnownInitiative = !!game.settings.get(MODULE_NAME, SettingName.RevealValues);
+
+            const activeIndex = baseData.turns.findIndex((t) => t.active);
+            const maskedTurns: HiddenInitiativeCombatTrackerData["turns"] = baseData.turns.map((t, i) => {
+                if (!t.hasRolled) {
+                    return {
+                        ...t,
+                        [STATUS]: InitiativeStatus.Unrolled,
+                        [SORT_KEY]: initiativeToInt(null),
+                        [TURN_INDEX]: i,
+                    };
+                }
+
+                // We want to mask the initiative (show a ?, sort to top) if:
+                // - round <= 1
+                // - i > activeIndex
+                const initiativeUnknown = baseData.round === 0 || (baseData.round === 1 && i > activeIndex);
+
+                // We show the real number, treating initiative as public, if any of these are true:
+                // - This creature's turn order is known (!initiativeUnknown) and settings say we should reveal
+                // - The current user owns this turn
+                // - The creature has associated players (gated on a setting)
+
+                // For players we hedge towards lenient (default Foundry) settings; as long as we haven't locked them to GM visibility,
+                // players can see each other's initiative in the trackers.
+                const shouldHidePlayers = game.settings.get(MODULE_NAME, SettingName.PlayerRoll) === RollVisibility.GM;
+
+                // For NPCs we lean in the opposite direction given the design intent of this module.
+                // We always hide initiative for NPCs unless the user has explicitly opted into open rolls.
+                const shouldRevealNpcs = game.settings.get(MODULE_NAME, SettingName.NpcRoll) === RollVisibility.Open;
+
+                const isPlayerTurn = !!t.players && t.players.length > 0;
+                if (
+                    (!initiativeUnknown && revealKnownInitiative) ||
+                    t.owner ||
+                    (!shouldHidePlayers && isPlayerTurn) ||
+                    (shouldRevealNpcs && !isPlayerTurn)
+                ) {
+                    return {
+                        ...t,
+                        [STATUS]: InitiativeStatus.Public,
+                        [SORT_KEY]: initiativeToInt(t.initiative),
+                        [TURN_INDEX]: i,
+                    };
+                }
+
+                // At this point, we can assume:
+                // - The current client is not a DM
+                // - The current client does not have "permission" to view this monster's initiative
+
+                return {
+                    ...t,
+                    initiative: initiativeUnknown ? UNKNOWN_MASK : REVEALED_MASK,
+                    [STATUS]: initiativeUnknown ? InitiativeStatus.Hidden : InitiativeStatus.Masked,
+                    [SORT_KEY]: initiativeToInt(initiativeUnknown ? UNKNOWN_MASK : t.initiative),
+                    [TURN_INDEX]: i,
+                };
+            });
+
+            // Once we've masked initiative, it's time to sort.
+            maskedTurns.sort((a, b) => {
+                // First sort by initiative (high to low).
+                const cmp = b[SORT_KEY] - a[SORT_KEY];
+
+                // Use original ordering as a tie breaker (low to high).
+                return cmp !== 0 ? cmp : a[TURN_INDEX] - b[TURN_INDEX];
+            });
+
+            // Overwrite the original turns
+            return {
+                ...baseData,
+                turns: maskedTurns,
+            };
+        };
     }
 
-    /**
-     * Provides data to the CombatTracker render template.
-     */
-    getData = async (): Promise<HiddenInitiativeCombatTrackerData> => {
-        const baseData = await super.getData();
+    return HiddenInitiativeMixinClass;
+};
 
-        // Whether to show numbers instead of masking as battle wears on
-        const revealKnownInitiative = !!game.settings.get(MODULE_NAME, SettingName.RevealValues);
-
-        const activeIndex = baseData.turns.findIndex((t) => t.active);
-        const maskedTurns: HiddenInitiativeCombatTrackerData["turns"] = baseData.turns.map((t, i) => {
-            if (!t.hasRolled) {
-                return {
-                    ...t,
-                    [STATUS]: InitiativeStatus.Unrolled,
-                    [SORT_KEY]: initiativeToInt(null),
-                    [TURN_INDEX]: i,
-                };
-            }
-
-            // We want to mask the initiative (show a ?, sort to top) if:
-            // - round <= 1
-            // - i > activeIndex
-            const initiativeUnknown = baseData.round === 0 || (baseData.round === 1 && i > activeIndex);
-
-            // We show the real number, treating initiative as public, if any of these are true:
-            // - This creature's turn order is known (!initiativeUnknown) and settings say we should reveal
-            // - The current user owns this turn
-            // - The creature has associated players (gated on a setting)
-
-            // For players we hedge towards lenient (default Foundry) settings; as long as we haven't locked them to GM visibility,
-            // players can see each other's initiative in the trackers.
-            const shouldHidePlayers = game.settings.get(MODULE_NAME, SettingName.PlayerRoll) === RollVisibility.GM;
-
-            // For NPCs we lean in the opposite direction given the design intent of this module.
-            // We always hide initiative for NPCs unless the user has explicitly opted into open rolls.
-            const shouldRevealNpcs = game.settings.get(MODULE_NAME, SettingName.NpcRoll) === RollVisibility.Open;
-
-            const isPlayerTurn = !!t.players && t.players.length > 0;
-            if (
-                (!initiativeUnknown && revealKnownInitiative) ||
-                t.owner ||
-                (!shouldHidePlayers && isPlayerTurn) ||
-                (shouldRevealNpcs && !isPlayerTurn)
-            ) {
-                return {
-                    ...t,
-                    [STATUS]: InitiativeStatus.Public,
-                    [SORT_KEY]: initiativeToInt(t.initiative),
-                    [TURN_INDEX]: i,
-                };
-            }
-
-            // At this point, we can assume:
-            // - The current client is not a DM
-            // - The current client does not have "permission" to view this monster's initiative
-
-            return {
-                ...t,
-                initiative: initiativeUnknown ? UNKNOWN_MASK : REVEALED_MASK,
-                [STATUS]: initiativeUnknown ? InitiativeStatus.Hidden : InitiativeStatus.Masked,
-                [SORT_KEY]: initiativeToInt(initiativeUnknown ? UNKNOWN_MASK : t.initiative),
-                [TURN_INDEX]: i,
-            };
-        });
-
-        // Once we've masked initiative, it's time to sort.
-        maskedTurns.sort((a, b) => {
-            // First sort by initiative (high to low).
-            const cmp = b[SORT_KEY] - a[SORT_KEY];
-
-            // Use original ordering as a tie breaker (low to high).
-            return cmp !== 0 ? cmp : a[TURN_INDEX] - b[TURN_INDEX];
-        });
-
-        // Overwrite the original turns
-        return {
-            ...baseData,
-            turns: maskedTurns,
-        };
-    };
-}
+const MixedIn = WithHiddenInitiative(CombatTracker);
+export const tracker = new MixedIn();

@@ -1,8 +1,8 @@
 import {
-    HiddenInitiativeCombatTracker,
     HiddenInitiativeCombatTrackerData,
     STATUS,
     InitiativeStatus,
+    WithHiddenInitiative,
 } from "./HiddenInitiativeCombatTracker.js";
 import { createRollInitiativeReplacement } from "./createRollInitiativeReplacement.js";
 import { loc } from "./loc.js";
@@ -88,7 +88,7 @@ Hooks.on("init", () => {
     });
 
     // Override the default CombatTracker with our extension
-    CONFIG.ui.combat = HiddenInitiativeCombatTracker;
+    CONFIG.ui.combat = WithHiddenInitiative(CONFIG.ui.combat);
 });
 
 /**
