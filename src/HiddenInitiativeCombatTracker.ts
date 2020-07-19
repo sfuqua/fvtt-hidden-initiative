@@ -170,6 +170,3 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
 
     return HiddenInitiativeMixinClass;
 };
-
-const MixedIn = WithHiddenInitiative(CombatTracker);
-export const tracker = new MixedIn();
