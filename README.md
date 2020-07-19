@@ -64,6 +64,10 @@ After that will be Sariph's turn, followed by the final goblin. On subsequent ro
 
 This section documents how the module works at a high level, to shed light on compatibility risks with other modules.
 
+### Known incompatibilities
+
+This module is not currently compatible with [Combat Enhancements](https://foundryvtt.com/packages/combat-enhancements/) by Asacolips. I am investigating ways to address this.
+
 ### Override of CombatTracker
 
 This module overwrites `CONFIG.ui.combat` with a custom class (`HiddenInitiativeCombatTracker`) in order to customize the data that is provided to the CombatTracker UI. Specifically, it provides a custom implementation of `CombatTracker.getData`, which first gets data from the base class and then tampers with it (overwriting initiative values and re-sorting).
