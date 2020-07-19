@@ -1,8 +1,8 @@
 import {
-    HiddenInitiativeCombatTracker,
     HiddenInitiativeCombatTrackerData,
     STATUS,
     InitiativeStatus,
+    WithHiddenInitiative,
 } from "./HiddenInitiativeCombatTracker.js";
 import { createRollInitiativeReplacement } from "./createRollInitiativeReplacement.js";
 import { loc } from "./loc.js";
@@ -88,7 +88,7 @@ Hooks.on("init", () => {
     });
 
     // Override the default CombatTracker with our extension
-    CONFIG.ui.combat = HiddenInitiativeCombatTracker;
+    CONFIG.ui.combat = WithHiddenInitiative(CONFIG.ui.combat);
 });
 
 /**
@@ -101,7 +101,7 @@ const ROLL_SHIMMED = Symbol("RollShimmed");
 // 2. Update the rendered HTML with a "..." for unrolled initiative
 // TODO: Group turns into separate lists, with headers.
 Hooks.on(
-    "renderHiddenInitiativeCombatTracker",
+    "renderCombatTracker",
     (tracker: CombatTracker, html: JQuery<HTMLElement>, data: HiddenInitiativeCombatTrackerData) => {
         // Monkeypatch the Combat.rollInitiative function if we haven't already for this instance
         const shimmedCombat = (data.combat as unknown) as { [ROLL_SHIMMED]?: boolean };

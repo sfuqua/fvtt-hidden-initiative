@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import {
-    HiddenInitiativeCombatTracker,
+    WithHiddenInitiative,
     SORT_KEY,
     TURN_INDEX,
     InitiativeStatus,
     STATUS,
     UNKNOWN_MASK,
     REVEALED_MASK,
+    HiddenInitiativeCombatTracker,
 } from "./HiddenInitiativeCombatTracker";
 import { SettingName, RollVisibility } from "./settings";
 
@@ -79,7 +80,8 @@ describe("HiddenInitiativeCombatTracker", () => {
     let tracker: HiddenInitiativeCombatTracker;
 
     beforeEach(() => {
-        tracker = new HiddenInitiativeCombatTracker();
+        const TrackerClass = WithHiddenInitiative(CombatTracker);
+        tracker = new TrackerClass();
     });
 
     afterEach(() => {
