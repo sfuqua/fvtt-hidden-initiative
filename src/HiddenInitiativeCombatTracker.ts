@@ -62,7 +62,14 @@ export type HiddenInitiativeCombatTrackerData = Omit<CombatTrackerData, "turns">
     >;
 };
 
+export type HiddenInitiativeCombatTracker = Omit<CombatTracker, "getData"> & {
+    getData(): Promise<HiddenInitiativeCombatTrackerData>;
+};
+
 type CombatTrackerConstructor = new (...args: ConstructorParameters<typeof CombatTracker>) => CombatTracker;
+type HiddenInitiativeCombatTrackerConstructor = new (
+    ...args: ConstructorParameters<typeof CombatTracker>
+) => HiddenInitiativeCombatTracker;
 
 /**
  * Extension of the Foundry VTT CombatTracker that handles massaging the
@@ -70,7 +77,9 @@ type CombatTrackerConstructor = new (...args: ConstructorParameters<typeof Comba
  * Dynamic/runtime extension pattern borrowed from https://www.bryntum.com/blog/the-mixin-pattern-in-typescript-all-you-need-to-know/
  * in order to allow merging classes from different modules.
  */
-export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(BaseTracker: T): CombatTrackerConstructor => {
+export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
+    BaseTracker: T
+): HiddenInitiativeCombatTrackerConstructor => {
     class HiddenInitiativeMixinClass extends BaseTracker {
         constructor(...args: ConstructorParameters<typeof CombatTracker>) {
             super(...args);

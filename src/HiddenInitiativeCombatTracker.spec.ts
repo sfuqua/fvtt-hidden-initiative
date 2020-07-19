@@ -8,6 +8,7 @@ import {
     STATUS,
     UNKNOWN_MASK,
     REVEALED_MASK,
+    HiddenInitiativeCombatTracker,
 } from "./HiddenInitiativeCombatTracker";
 import { SettingName, RollVisibility } from "./settings";
 
@@ -46,18 +47,6 @@ const baseGetData = jest.fn<Data, []>();
 global.CombatTracker.prototype.getData = baseGetData;
 
 // @ts-ignore
-if (!global.CombatTracker) {
-    // @ts-ignore
-    global.CombatTracker = class {
-        getData = baseGetData;
-    };
-
-    throw new Error("xyz");
-} else {
-    throw new Error("asdf");
-}
-
-// @ts-ignore
 global.game = {
     settings: {
         get: jest.fn(),
@@ -88,7 +77,7 @@ function mockSettings(npcRoll: RollVisibility, playerRoll: RollVisibility, revea
 }
 
 describe("HiddenInitiativeCombatTracker", () => {
-    let tracker: CombatTracker;
+    let tracker: HiddenInitiativeCombatTracker;
 
     beforeEach(() => {
         const TrackerClass = WithHiddenInitiative(CombatTracker);
