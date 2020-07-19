@@ -168,5 +168,6 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
         };
     }
 
+    Object.defineProperty(HiddenInitiativeMixinClass.prototype.constructor, "name", { value: "CombatTracker" });
     return HiddenInitiativeMixinClass;
 };
