@@ -23,6 +23,7 @@ interface Turn {
     active?: boolean;
     owner?: boolean;
     initiative: string | null;
+    name?: string;
     [SORT_KEY]?: number;
     [TURN_INDEX]?: number;
     [STATUS]?: InitiativeStatus;
@@ -188,7 +189,7 @@ describe("HiddenInitiativeCombatTracker", () => {
             });
         });
 
-        it("obscures NPC values", () => {
+        it("obscures NPC values, sorting by name", () => {
             return test({
                 round: 0,
                 originalTurns: [
@@ -197,11 +198,107 @@ describe("HiddenInitiativeCombatTracker", () => {
                         owner: false,
                         players: [],
                         initiative: "5",
+                        name: "Goblin",
+                    },
+                    {
+                        hasRolled: true,
+                        owner: false,
+                        players: [],
+                        initiative: "1",
+                        name: "Gablin",
+                    },
+                    {
+                        hasRolled: true,
+                        owner: false,
+                        players: [],
+                        initiative: "20",
+                        name: "Gzblin",
                     },
                 ],
                 expectedOverrides: [
                     {
+                        originalIndex: 1,
+                        initiative: UNKNOWN_MASK,
+                        status: InitiativeStatus.Hidden,
+                    },
+                    {
                         originalIndex: 0,
+                        initiative: UNKNOWN_MASK,
+                        status: InitiativeStatus.Hidden,
+                    },
+                    {
+                        originalIndex: 2,
+                        initiative: UNKNOWN_MASK,
+                        status: InitiativeStatus.Hidden,
+                    },
+                ],
+            });
+        });
+
+        it("only uses name as a tiebreaker for hidden information", () => {
+            return test({
+                round: 1,
+                originalTurns: [
+                    {
+                        hasRolled: true,
+                        initiative: "5",
+                        name: "Goblin",
+                    },
+                    {
+                        hasRolled: true,
+                        initiative: "1",
+                        name: "Gablin",
+                    },
+                    {
+                        hasRolled: true,
+                        active: true,
+                        initiative: "20",
+                        name: "Gzblin",
+                    },
+                    {
+                        hasRolled: true,
+                        initiative: "5",
+                        name: "Goblin",
+                    },
+                    {
+                        hasRolled: true,
+                        initiative: "1",
+                        name: "Gablin",
+                    },
+                    {
+                        hasRolled: true,
+                        initiative: "20",
+                        name: "Gzblin",
+                    },
+                ],
+                expectedOverrides: [
+                    {
+                        originalIndex: 2,
+                        initiative: REVEALED_MASK,
+                        status: InitiativeStatus.Masked,
+                    },
+                    {
+                        originalIndex: 0,
+                        initiative: REVEALED_MASK,
+                        status: InitiativeStatus.Masked,
+                    },
+                    {
+                        originalIndex: 1,
+                        initiative: REVEALED_MASK,
+                        status: InitiativeStatus.Masked,
+                    },
+                    {
+                        originalIndex: 4,
+                        initiative: UNKNOWN_MASK,
+                        status: InitiativeStatus.Hidden,
+                    },
+                    {
+                        originalIndex: 3,
+                        initiative: UNKNOWN_MASK,
+                        status: InitiativeStatus.Hidden,
+                    },
+                    {
+                        originalIndex: 5,
                         initiative: UNKNOWN_MASK,
                         status: InitiativeStatus.Hidden,
                     },
@@ -217,11 +314,13 @@ describe("HiddenInitiativeCombatTracker", () => {
                         hasRolled: true,
                         owner: false,
                         initiative: "20",
+                        name: "b",
                     },
                     {
                         hasRolled: true,
                         owner: false,
                         initiative: "1",
+                        name: "a",
                     },
                     {
                         hasRolled: false,
@@ -249,12 +348,12 @@ describe("HiddenInitiativeCombatTracker", () => {
                         status: InitiativeStatus.Public,
                     },
                     {
-                        originalIndex: 0,
+                        originalIndex: 1,
                         initiative: UNKNOWN_MASK,
                         status: InitiativeStatus.Hidden,
                     },
                     {
-                        originalIndex: 1,
+                        originalIndex: 0,
                         initiative: UNKNOWN_MASK,
                         status: InitiativeStatus.Hidden,
                     },

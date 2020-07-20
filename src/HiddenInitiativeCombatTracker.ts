@@ -154,9 +154,21 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
             // Once we've masked initiative, it's time to sort.
             maskedTurns.sort((a, b) => {
                 // First sort by initiative (high to low).
-                const cmp = b[SORT_KEY] - a[SORT_KEY];
+                let cmp = b[SORT_KEY] - a[SORT_KEY];
 
-                // Use original ordering as a tie breaker (low to high).
+                if (cmp !== 0) {
+                    return cmp;
+                }
+
+                if (a[STATUS] === InitiativeStatus.Hidden && b[STATUS] === InitiativeStatus.Hidden) {
+                    // If initiative for both are hidden, sort by name.
+                    cmp = (a.name || "").localeCompare(b.name || "");
+                    if (cmp !== 0) {
+                        return cmp;
+                    }
+                }
+
+                // As a final tiebreaker use original ordering as a tie breaker (low to high).
                 return cmp !== 0 ? cmp : a[TURN_INDEX] - b[TURN_INDEX];
             });
 
