@@ -4,7 +4,10 @@ import {
     InitiativeStatus,
     WithHiddenInitiative,
 } from "./HiddenInitiativeCombatTracker.js";
-import { createRollInitiativeReplacement } from "./createRollInitiativeReplacement.js";
+import {
+    createRollInitiativeReplacement,
+    createLegacyRollInitiativeReplacement,
+} from "./createRollInitiativeReplacement.js";
 import { loc } from "./loc.js";
 import { RollVisibility, MODULE_NAME, SettingName } from "./settings.js";
 
@@ -96,6 +99,11 @@ Hooks.on("init", () => {
  */
 const ROLL_SHIMMED = Symbol("RollShimmed");
 
+/**
+ * Data key to track whether we've updated the HTML of a given Turn already.
+ */
+const TURN_UPDATED_KEY = "hidden-initiative-repainted";
+
 // Hook into the rendering of the combat tracker so that we can do two things:
 // 1. Shim the Combat.rollInitiative function
 // 2. Update the rendered HTML with a "..." for unrolled initiative
@@ -107,8 +115,14 @@ Hooks.on(
         const shimmedCombat = (data.combat as unknown) as { [ROLL_SHIMMED]?: boolean };
         if (data.combat && !shimmedCombat[ROLL_SHIMMED]) {
             shimmedCombat[ROLL_SHIMMED] = true;
-            const originalRollFn = data.combat.rollInitiative;
-            data.combat.rollInitiative = createRollInitiativeReplacement(data.combat, originalRollFn);
+            if (isNewerVersion(game.data.version, "0.7.1")) {
+                // 0.7.2 changed the signature of rollInitiative
+                const originalRollFn = data.combat.rollInitiative as InitiativeRoller;
+                data.combat.rollInitiative = createRollInitiativeReplacement(data.combat, originalRollFn);
+            } else {
+                const originalRollFn = data.combat.rollInitiative as LegacyInitiativeRoller;
+                data.combat.rollInitiative = createLegacyRollInitiativeReplacement(data.combat, originalRollFn);
+            }
         }
 
         // TODO
@@ -122,9 +136,10 @@ Hooks.on(
         // console.log(JSON.stringify(data));
         for (const t of data.turns) {
             if (t[STATUS] === InitiativeStatus.Unrolled && !t.owner) {
-                html.find(`[data-combatant-id='${t._id}'] > div.token-initiative`).append(
-                    '<span class="initiative">...</span>'
-                );
+                const initiativeNode = html.find(`[data-combatant-id='${t._id}'] > div.token-initiative`);
+                if (initiativeNode && !initiativeNode.data(TURN_UPDATED_KEY)) {
+                    initiativeNode.data(TURN_UPDATED_KEY, true).append('<span class="initiative">...</span>');
+                }
             }
         }
     }

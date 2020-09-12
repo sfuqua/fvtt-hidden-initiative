@@ -7,6 +7,21 @@ declare interface CombatTrackerConfig {
     getAttributeChoices(): Record<string, string[]>;
 }
 
+/**
+ * Helper typedef for Combat.rollInitiative, up through FVTT 0.7.1.
+ */
+declare type LegacyInitiativeRoller = (
+    ids: string | string[],
+    formula?: string | null,
+    options?: MessageOptions
+) => Promise<Combat>;
+
+/**
+ * New typedef for Combat.rollInitiative, as of FVTT 0.7.2.
+ * Notably, the previous "formula" is now merged into a new options structure.
+ */
+declare type InitiativeRoller = (ids: string | string[], options?: InitiativeOptions) => Promise<Combat>;
+
 declare class Combat {
     /**
      * The currently active Combatant (whose turn it is).
@@ -14,11 +29,7 @@ declare class Combat {
     readonly combatant: Combatant;
     getCombatant(id: string): Combatant | undefined;
     getCombatantByToken(tokenId: string): Combatant | undefined;
-    rollInitiative(
-        ids: string | string[],
-        formula: string | null = null,
-        options: InitiativeOptions = {}
-    ): Promise<Combat>;
+    rollInitiative: LegacyInitiativeRoller | InitiativeRoller;
     setInitiative(id: string, value: string): Promise<void>;
     updateCombatant(newData: { _id: string } & Partial<Combatant>): Promise<void>;
 }
@@ -105,8 +116,14 @@ type CombatTurnData = CombatTurn & {
     css: string;
 };
 
-declare type InitiativeOptions = {
+declare type MessageOptions = {
     rollMode?: "roll" | "gmroll";
+};
+
+declare type InitiativeOptions = {
+    formula?: string | null;
+    updateTurn?: boolean;
+    messageOptions?: MessageOptions;
 };
 
 declare interface CombatTrackerData {
