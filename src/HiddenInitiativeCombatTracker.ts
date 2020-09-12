@@ -33,7 +33,7 @@ export enum InitiativeStatus {
 
     /**
      * This creature has slotted into the turn order somewhere,
-     * but it's actual value is still a mystery.
+     * but its actual value is still a mystery.
      */
     Masked,
 
