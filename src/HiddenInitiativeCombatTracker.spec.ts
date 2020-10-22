@@ -45,12 +45,18 @@ interface Data {
 const baseGetData = jest.fn<Data, []>();
 
 // @ts-ignore
+global.isNewerVersion = jest.fn(() => true);
+
+// @ts-ignore
 global.CombatTracker.prototype.getData = baseGetData;
 
 // @ts-ignore
 global.game = {
     settings: {
         get: jest.fn(),
+    },
+    data: {
+        version: "0.7.5",
     },
 };
 
