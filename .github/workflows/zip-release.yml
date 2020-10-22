@@ -6,7 +6,7 @@ on:
       - master
     paths:
       - module.json
-  workflow_dispatch
+  workflow_dispatch: {}
 
 jobs:
   build:
