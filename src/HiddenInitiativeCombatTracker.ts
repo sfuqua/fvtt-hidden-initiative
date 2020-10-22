@@ -180,6 +180,15 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
         };
     }
 
-    Object.defineProperty(HiddenInitiativeMixinClass.prototype.constructor, "name", { value: "CombatTracker" });
+    // Prior to Foundry 0.7.1, it was necessary to masquerade as the CombatTracker,
+    // otherwise we'd see a renderHiddenInitiativeCombatTracker hook but not renderCombatTracker.
+    // As of 0.7.1, hooks are called for the entire inheritance chain instead, so we can set our name
+    // to HiddenInitiativeCombatTracker instead (and if we don't, other modules will see renderCombatTracker twice
+    // and potentially duplicate their UI).
+    const constructorName = isNewerVersion(game.data.version, "0.7.0")
+        ? "HiddenInitiativeCombatTracker"
+        : "CombatTracker";
+    Object.defineProperty(HiddenInitiativeMixinClass.prototype.constructor, "name", { value: constructorName });
+
     return HiddenInitiativeMixinClass;
 };
