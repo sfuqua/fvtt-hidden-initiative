@@ -9,7 +9,7 @@
     "compatibleCoreVersion": "0.7.5",
     "url": "https://github.com/sfuqua/fvtt-hidden-intiative",
     "manifest": "https://raw.githubusercontent.com/sfuqua/fvtt-hidden-initiative/master/module.json",
-    "download": "https://github.com/sfuqua/fvtt-hidden-initiative/releases/download/0.3.1/fvtt-hidden-initiative-module.zip",
+    "download": "https://github.com/sfuqua/fvtt-hidden-initiative/releases/download/0.3.2/fvtt-hidden-initiative-module.zip",
     "languages": [
         {
             "lang": "en",
