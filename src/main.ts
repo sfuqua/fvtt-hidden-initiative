@@ -144,3 +144,23 @@ Hooks.on(
         }
     }
 );
+
+// Since we overwrite the CombatTracker with a different class,
+// we're stomping over the default "getCombatTrackerEntryContext" hook.
+// Pass it through to other modules.
+// TODO: Should probably revisit this every Foundry release to make sure it's
+// still a necessary and functional workaround...
+Hooks.on(
+    "getHiddenInitiativeCombatTrackerEntryContext",
+    (...args: any[]) => {
+        Hooks.call("getCombatTrackerEntryContext", ...args);
+    }
+)
+
+// Same^
+Hooks.on(
+    "getHiddenInitiativeCombatTrackerHeaderButtons ",
+    (...args: any[]) => {
+        Hooks.call("getCombatTrackerHeaderButtons ", ...args);
+    }
+)
