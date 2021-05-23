@@ -152,7 +152,7 @@ Hooks.on(
 // still a necessary and functional workaround...
 Hooks.on(
     "getHiddenInitiativeCombatTrackerEntryContext",
-    (...args: any[]) => {
+    (...args: unknown[]) => {
         Hooks.call("getCombatTrackerEntryContext", ...args);
     }
 )
@@ -160,7 +160,7 @@ Hooks.on(
 // Same^
 Hooks.on(
     "getHiddenInitiativeCombatTrackerHeaderButtons ",
-    (...args: any[]) => {
+    (...args: unknown[]) => {
         Hooks.call("getCombatTrackerHeaderButtons ", ...args);
     }
 )

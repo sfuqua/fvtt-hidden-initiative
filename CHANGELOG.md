@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Tested for 0.8.5 compatibility and updated a function call to avoid breaking in 0.9.0.
 
+### Fixed
+
+-   Addressed an issue where the module was preventing other modules from seeing expected hooks for populating context menus and header buttons in the combat tracker. This should fix a compatibility issue with "Drag Ruler", for example.
+
 ## 0.3.2 - 2020/10/22
 
 ### Fixed
