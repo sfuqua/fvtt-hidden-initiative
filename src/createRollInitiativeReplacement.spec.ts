@@ -8,21 +8,32 @@ import { SettingName, RollVisibility } from "./settings";
 
 // @ts-ignore
 global.game = {
+    data: {
+        version: "0.8.5",
+    },
     settings: {
         get: jest.fn(),
     },
 };
 
+// @ts-ignore
+global.isNewerVersion = jest.fn(() => true);
+
+const mockGetCombatantById = (id: string) => {
+    if (id.startsWith("pc")) {
+        return {
+            players: ["test-player"],
+        };
+    } else {
+        return {};
+    }
+};
+
 const MOCK_COMBAT = ({
-    getCombatant(id: string) {
-        if (id.startsWith("pc")) {
-            return {
-                players: ["test-player"],
-            };
-        } else {
-            return {};
-        }
+    combatants: {
+        get: mockGetCombatantById
     },
+    getCombatant: mockGetCombatantById,
     // @ts-ignore
 } as unknown) as Combat;
 

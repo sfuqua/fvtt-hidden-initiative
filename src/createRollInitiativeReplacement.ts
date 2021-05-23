@@ -15,6 +15,18 @@ function getRollMode(setting: RollVisibility): "roll" | "gmroll" | undefined {
 }
 
 /**
+ * Gets a Combatant by ID from the current Combat in a version-agnostic fashion.
+ */
+function getCombatantById(this: Combat, id: string): Combatant | undefined {
+    if (isNewerVersion(game.data.version, "0.7.9")) {
+        // Version 0.8.0 deprecated getCombatant in favor of combatans.get
+        return this.combatants.get(id);
+    } else {
+        return this.getCombatant(id);
+    }
+}
+
+/**
  * Partitions "ids" into NPC IDs vs player IDs
  * @param this Combat
  * @param ids One or more entity IDs
@@ -26,7 +38,7 @@ function partitionRolls(this: Combat, ids: string | string[]) {
     const playerIds: string[] = [];
     const idArr = typeof ids === "string" ? [ids] : ids;
     for (const id of idArr) {
-        const combatant = this.getCombatant(id);
+        const combatant = getCombatantById.call(this, id);
         if (combatant) {
             if (combatant.players && combatant.players.length > 0) {
                 playerIds.push(id);

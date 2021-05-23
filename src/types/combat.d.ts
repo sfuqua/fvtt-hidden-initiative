@@ -27,6 +27,9 @@ declare class Combat {
      * The currently active Combatant (whose turn it is).
      */
     readonly combatant: Combatant;
+
+    readonly combatants: Map<id, Combatant>;
+
     getCombatant(id: string): Combatant | undefined;
     getCombatantByToken(tokenId: string): Combatant | undefined;
     rollInitiative: LegacyInitiativeRoller | InitiativeRoller;
