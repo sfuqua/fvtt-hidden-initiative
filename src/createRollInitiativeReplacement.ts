@@ -18,8 +18,8 @@ function getRollMode(setting: RollVisibility): "roll" | "gmroll" | undefined {
  * Gets a Combatant by ID from the current Combat in a version-agnostic fashion.
  */
 function getCombatantById(this: Combat, id: string): Combatant | undefined {
-    if (isNewerVersion(game.data.version, "0.7.9")) {
-        // Version 0.8.0 deprecated getCombatant in favor of combatans.get
+    if (typeof this.combatants?.get === "function") {
+        // Version 0.8.0 deprecated getCombatant in favor of combatants.get
         return this.combatants.get(id);
     } else {
         return this.getCombatant(id);

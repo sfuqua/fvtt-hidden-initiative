@@ -112,7 +112,7 @@ Hooks.on(
     "renderCombatTracker",
     (tracker: CombatTracker, html: JQuery<HTMLElement>, data: HiddenInitiativeCombatTrackerData) => {
         // Monkeypatch the Combat.rollInitiative function if we haven't already for this instance
-        const shimmedCombat = (data.combat as unknown) as { [ROLL_SHIMMED]?: boolean };
+        const shimmedCombat = data.combat as unknown as { [ROLL_SHIMMED]?: boolean };
         if (data.combat && !shimmedCombat[ROLL_SHIMMED]) {
             shimmedCombat[ROLL_SHIMMED] = true;
             if (isNewerVersion(game.data.version, "0.7.1")) {
@@ -145,14 +145,14 @@ Hooks.on(
     }
 );
 
-// Since we overwrite the CombatTracker with a different class, we're stomping over
-// the default "getCombatTrackerEntryContext" hook.
-// Pass it through to other modules. This seems to be the only impacted hook for CombatTracker scenarios.
-// TODO: Should probably revisit this every Foundry release to make sure it's still a necessary and functional workaround...
-// https://gitlab.com/foundrynet/foundryvtt/-/issues/5189
-Hooks.on(
-    "getHiddenInitiativeCombatTrackerEntryContext",
-    (...args: unknown[]) => {
+Hooks.on("getHiddenInitiativeCombatTrackerEntryContext", (...args: unknown[]) => {
+    // In 0.8.5 and earlier, there was a Foundry bug where context menu hooks were not called for base
+    // classes, so it's necessary to manually delegate these calls to provide compatibility
+    // with modules that rely on them: https://gitlab.com/foundrynet/foundryvtt/-/issues/5189
+
+    // Note that we have to do this check inside the hook callback, because 'game.data' is not defined at the global scope
+    // when this module is loaded.
+    if (!isNewerVersion(game.data.version, "0.8.5")) {
         Hooks.call("getCombatTrackerEntryContext", ...args);
     }
-)
+});
