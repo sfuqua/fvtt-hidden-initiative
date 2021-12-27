@@ -95,7 +95,7 @@ Hooks.on("init", () => {
 });
 
 /**
- * Dictionary key to use to track whether a Combast instance has already been patched by this module.
+ * Dictionary key to use to track whether a Combat instance has already been patched by this module.
  */
 const ROLL_SHIMMED = Symbol("RollShimmed");
 
