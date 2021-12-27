@@ -6,6 +6,8 @@
 
 This module is structured as a private NPM package. You should be able to clone it, run `npm install`, and be on your way.
 
+Development uses npm@8 (included with Node.js 16).
+
 All code is written in TypeScript and lives under "src/".
 Build output (the installable module) gets copied to a new folder called "module/".
 
