@@ -134,9 +134,9 @@ Hooks.on(
         // Override CombatTracker.getData; call it, and then re-map 'turns'
         // For non-player turns, we could do check: if (!(player || owner)), replace initiative and sort to top
         // console.log(JSON.stringify(data));
-        for (const t of data.turns) {
-            if (t[STATUS] === InitiativeStatus.Unrolled && !t.owner) {
-                const initiativeNode = html.find(`[data-combatant-id='${t._id}'] > div.token-initiative`);
+        for (const t of data.turns.actor) {
+            if (t.STATUS === InitiativeStatus.Unrolled && !t.owner) {
+                const initiativeNode = html.find(`[data-combatant-id='${t.id}'] > div.token-initiative`);
                 if (initiativeNode && !initiativeNode.data(TURN_UPDATED_KEY)) {
                     initiativeNode.data(TURN_UPDATED_KEY, true).append('<span class="initiative">...</span>');
                 }

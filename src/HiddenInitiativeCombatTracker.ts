@@ -55,9 +55,9 @@ export const STATUS = Symbol("InitiativeStatus");
 export type HiddenInitiativeCombatTrackerData = Omit<CombatTrackerData, "turns"> & {
     turns: Array<
         CombatTurnData & {
-            [SORT_KEY]: number;
-            [TURN_INDEX]: number;
-            [STATUS]: InitiativeStatus;
+            SORT_KEY: number;
+            TURN_INDEX: number;
+            STATUS: InitiativeStatus;
         }
     >;
 };
@@ -99,9 +99,9 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
                 if (!t.hasRolled) {
                     return {
                         ...t,
-                        [STATUS]: InitiativeStatus.Unrolled,
-                        [SORT_KEY]: initiativeToInt(null),
-                        [TURN_INDEX]: i,
+                        STATUS: InitiativeStatus.Unrolled,
+                        SORT_KEY: initiativeToInt(null),
+                        TURN_INDEX: i,
                     };
                 }
 
@@ -132,9 +132,9 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
                 ) {
                     return {
                         ...t,
-                        [STATUS]: InitiativeStatus.Public,
-                        [SORT_KEY]: initiativeToInt(t.initiative),
-                        [TURN_INDEX]: i,
+                        STATUS: InitiativeStatus.Public,
+                        SORT_KEY: initiativeToInt(t.initiative),
+                        TURN_INDEX: i,
                     };
                 }
 
@@ -145,22 +145,22 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
                 return {
                     ...t,
                     initiative: initiativeUnknown ? UNKNOWN_MASK : REVEALED_MASK,
-                    [STATUS]: initiativeUnknown ? InitiativeStatus.Hidden : InitiativeStatus.Masked,
-                    [SORT_KEY]: initiativeToInt(initiativeUnknown ? UNKNOWN_MASK : t.initiative),
-                    [TURN_INDEX]: i,
+                    STATUS: initiativeUnknown ? InitiativeStatus.Hidden : InitiativeStatus.Masked,
+                    SORT_KEY: initiativeToInt(initiativeUnknown ? UNKNOWN_MASK : t.initiative),
+                    TURN_INDEX: i,
                 };
             });
 
             // Once we've masked initiative, it's time to sort.
             maskedTurns.sort((a, b) => {
                 // First sort by initiative (high to low).
-                let cmp = b[SORT_KEY] - a[SORT_KEY];
+                let cmp = b.SORT_KEY - a.SORT_KEY;
 
                 if (cmp !== 0) {
                     return cmp;
                 }
 
-                if (a[STATUS] === InitiativeStatus.Hidden && b[STATUS] === InitiativeStatus.Hidden) {
+                if (a.STATUS === InitiativeStatus.Hidden && b.STATUS === InitiativeStatus.Hidden) {
                     // If initiative for both are hidden, sort by name.
                     cmp = (a.name || "").localeCompare(b.name || "");
                     if (cmp !== 0) {
@@ -169,13 +169,15 @@ export const WithHiddenInitiative = <T extends CombatTrackerConstructor>(
                 }
 
                 // As a final tiebreaker use original ordering as a tie breaker (low to high).
-                return cmp !== 0 ? cmp : a[TURN_INDEX] - b[TURN_INDEX];
+                return cmp !== 0 ? cmp : a.TURN_INDEX - b.TURN_INDEX;
             });
 
             // Overwrite the original turns
             return {
                 ...baseData,
-                turns: maskedTurns,
+                turns: {
+                    actor: maskedTurns
+                }
             };
         };
     }
